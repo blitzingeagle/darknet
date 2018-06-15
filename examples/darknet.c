@@ -22,6 +22,8 @@ extern void run_art(int argc, char **argv);
 extern void run_super(int argc, char **argv);
 extern void run_lsd(int argc, char **argv);
 
+char *darknet_path;
+
 void average(int argc, char *argv[])
 {
     char *cfgfile = argv[2];
@@ -402,6 +404,9 @@ void visualize(char *cfgfile, char *weightfile)
 
 int main(int argc, char **argv)
 {
+    darknet_path = getenv("DARKNET_PATH");
+    //printf("DARKNET_PATH: %s\n", darknet_path);
+    
     //test_resize("data/bad.jpg");
     //test_box();
     //test_convolutional_layer();
