@@ -406,7 +406,7 @@ int main(int argc, char **argv)
 {
     darknet_path = getenv("DARKNET_PATH");
     //printf("DARKNET_PATH: %s\n", darknet_path);
-    
+
     //test_resize("data/bad.jpg");
     //test_box();
     //test_convolutional_layer();
