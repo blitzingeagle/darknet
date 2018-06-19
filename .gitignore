@@ -4,6 +4,7 @@
 *.out
 *.png
 *.jpg
+*.mp4
 *.pyc
 old/
 mnist/
@@ -16,6 +17,7 @@ convnet/
 decaf/
 submission/
 cfg/
+weights/
 darknet
 .fuse*
 
