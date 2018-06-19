@@ -61,8 +61,7 @@ int *read_map(char *filename)
     int n = 0;
     int *map = 0;
     char *str;
-    FILE *file = fopen(filename, "r");
-    if(!file) file_error(filename);
+    FILE *file = retrieve_file(filename, "r", 1);
     while((str=fgetl(file))){
         ++n;
         map = realloc(map, n*sizeof(int));
@@ -724,18 +723,18 @@ float **one_hot_encode(float *a, int n, int k)
     return t;
 }
 
-FILE *retrieve_file(char *file) {
+FILE *retrieve_file(char *file, const char *mode, int terminate) {
   FILE *fp;
 
-  fp = fopen(file, "r");
+  fp = fopen(file, mode);
 
   if(!fp) {
     char filepath[255];
     strcpy(filepath, darknet_path);
     strcat(filepath, "/");
     strcat(filepath, file);
-    fp = fopen(filepath, "r");
-    if(!fp) file_error(file);
+    fp = fopen(filepath, mode);
+    if(!fp && terminate) file_error(file);
   }
 
   return (fp);

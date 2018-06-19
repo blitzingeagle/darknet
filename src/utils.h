@@ -48,6 +48,6 @@ float **one_hot_encode(float *a, int n, int k);
 float sec(clock_t clocks);
 void print_statistics(float *a, int n);
 int int_index(int *a, int val, int n);
-FILE *retrieve_file(char *file);
+FILE *retrieve_file(char *file, const char *mode, int terminate);
 
 #endif
