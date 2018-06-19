@@ -25,3 +25,7 @@ ehthumbs.db
 Icon?
 Thumbs.db
 *.swp
+
+# Make #
+libdarknet.a
+libdarknet.so
