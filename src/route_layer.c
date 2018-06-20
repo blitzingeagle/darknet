@@ -6,7 +6,7 @@
 
 route_layer make_route_layer(int batch, int n, int *input_layers, int *input_sizes)
 {
-    //fprintf(stdout,"route ");
+    fprintf(stderr,"route ");
     route_layer l = {0};
     l.type = ROUTE;
     l.batch = batch;
@@ -16,10 +16,10 @@ route_layer make_route_layer(int batch, int n, int *input_layers, int *input_siz
     int i;
     int outputs = 0;
     for(i = 0; i < n; ++i){
-        //fprintf(stdout," %d", input_layers[i]);
+        fprintf(stderr," %d", input_layers[i]);
         outputs += input_sizes[i];
     }
-    //fprintf(stdout, "\n");
+    fprintf(stderr, "\n");
     l.outputs = outputs;
     l.inputs = outputs;
     l.delta =  calloc(outputs*batch, sizeof(float));
@@ -68,7 +68,7 @@ void resize_route_layer(route_layer *l, network *net)
     l->output_gpu  = cuda_make_array(l->output, l->outputs*l->batch);
     l->delta_gpu   = cuda_make_array(l->delta,  l->outputs*l->batch);
 #endif
-    
+
 }
 
 void forward_route_layer(const route_layer l, network net)

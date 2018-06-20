@@ -50,7 +50,7 @@ void output_result(char *indata)
     json_object_object_add(data,"outputfile",json_object_new_string(indata));
     json_object_object_add(jroot,"data",data);
     json_object_object_add(jroot,"type",json_object_new_string("RESULT"));
-    
+
     printf("%s\n",json_object_to_json_string_ext(jroot,JSON_C_TO_STRING_NOSLASHESCAPE));
     //json_object_put(data);
     json_object_put(jroot);
@@ -61,7 +61,7 @@ void write_json_file(FILE *file, char* image_name, char* tag)
     json_object *jroot = json_object_new_object();
     json_object_object_add(jroot,"filename",json_object_new_string(image_name));
     json_object *tag_array = json_object_new_array();
-    
+
     char *pch;
     char tag_tmp[4096];
     strcpy(tag_tmp,tag);
@@ -72,7 +72,7 @@ void write_json_file(FILE *file, char* image_name, char* tag)
         json_object_array_add(tag_array,split_tag);
         pch = strtok(NULL,"|");
     }
-    
+
     //json_object_object_add(jroot,"tag",json_object_new_string(tag));
     json_object_object_add(jroot,"tag",tag_array);
     char buffer[4096] = {0};
@@ -134,12 +134,12 @@ void *detect_in_thread(void *ptr)
     }
     if (nms > 0) do_nms_obj(boxes, probs, l.w*l.h*l.n, l.classes, nms);
 
-    //printf("\033[2J");
-    //printf("\033[1;1H");
-    //printf("\nFPS:%.1f\n",fps);
-    printf("Objects:\n");
+    printf("\033[2J");
+    printf("\033[1;1H");
+    printf("\nFPS:%.1f\n",fps);
+    printf("Objects:\n\n");
     image display = buff[(buff_index+2) % 3];
-    
+
     draw_detections_whitelist(display, demo_detections, demo_thresh, boxes, probs, 0, demo_names, demo_alphabet, demo_classes, whitelist, listsize, tag_results);
     //printf("detect_in_thread : %s\n", tag_results);
     demo_index = (demo_index + 1)%demo_frame;
@@ -203,7 +203,7 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
     demo_classes = classes;
     demo_thresh = thresh;
     demo_hier = hier;
-    //printf("Demo\n");
+    printf("Demo\n");
     net = load_network(cfgfile, weightfile, 0);
     set_batch_network(net, 1);
     pthread_t detect_thread;
@@ -253,12 +253,12 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
 
     int count = 0;
     demo_time = what_time_is_it_now();
-    
+
    // CvVideoWriter *writer = NULL;
     FILE *fp = fopen(whitelist_name,"r");
     if(fp != NULL){
         char buffer[1024];
-        while(fgets(buffer,sizeof(buffer),fp) != NULL){ 
+        while(fgets(buffer,sizeof(buffer),fp) != NULL){
             listsize++;
         }
         fclose(fp);
@@ -267,7 +267,7 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
             int refined_listsize = 0;
             whitelist = calloc(listsize, sizeof(char*));
             for(int i = 0; i < listsize && fgets(buffer,1024,fp) != NULL; i++){
-                if(strcmp(buffer,"\n") == 0){ 
+                if(strcmp(buffer,"\n") == 0){
                     continue;
                 }
                 else if(buffer[strlen(buffer) - 1] == '\n'){
@@ -278,11 +278,11 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
             listsize = refined_listsize;
         }
         fclose(fp);
-    } 
+    }
 
-    printf("white_list size : %d\n",listsize);    
+    printf("white_list size : %d\n",listsize);
     for(int i = 0; i < listsize; i++) printf("%d_%s\n",i,whitelist[i]);
-    
+
     // create FILE for json result output
     char *outputtext_name = calloc(strlen(prefix) + 10,sizeof(char));
     sprintf(outputtext_name,"%s%s",prefix,".txt");
@@ -301,14 +301,14 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
 
     bool image_save_flag = true;
     while(!demo_done){
-        // buff |_|_|_|  save_jpg : (buff_index + 1)%3 | fetch_image : (buff_index)%3 | detect_image : (buff_index + 2) % 3 
+        // buff |_|_|_|  save_jpg : (buff_index + 1)%3 | fetch_image : (buff_index)%3 | detect_image : (buff_index + 2) % 3
         // 1st:  buff_index=1; |d|f|s| save_jpg-counter=0, detect_image_json-counter=1;
         // 2nd:  buff_index=2; |s|d|f| save_jpg-counter=1, detect_image_json-counter=2;
         // 3rd:  buff_index=3; |f|s|d| save_jpg-counter=2, detect_image_json-counter=3;
         buff_index = (buff_index + 1) %3;
         if(pthread_create(&fetch_thread, 0, fetch_in_thread, 0)) error("Thread creation failed");
         if(pthread_create(&detect_thread, 0, detect_in_thread, 0)) error("Thread creation failed");
-        
+
         // save previous image result
         image p = buff[(buff_index + 1)%3];
         if(outputvideo){
@@ -334,20 +334,20 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
         sprintf(name, "%s_%08d.jpg", prefix, count);
         //printf("save json : %s\n",name);
         write_json_file(outputtext,name,tag_results);
-        
+
         // if image contain object, set flag = true.
         if(strlen(tag_results) != 0)
             image_save_flag = true;
         else
             image_save_flag = false;
-        
+
         memset(tag_results, '\0', strlen(tag_results));
 
         if(count % 2 == 0){
             int progress = 0;
             if(total_videoframes > 0)
                 progress = (count * 100.0 / total_videoframes);
-            else 
+            else
                 progress = 0;
             update_progress(progress);
             fflush(outputtext);
@@ -428,7 +428,7 @@ void demo_compare(char *cfg1, char *weight1, char *cfg2, char *weight2, float th
 
     int count = 0;
     if(!prefix){
-        cvNamedWindow("Demo", CV_WINDOW_NORMAL); 
+        cvNamedWindow("Demo", CV_WINDOW_NORMAL);
         if(fullscreen){
             cvSetWindowProperty("Demo", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);
         } else {
@@ -463,4 +463,3 @@ void demo(char *cfgfile, char *weightfile, float thresh, int cam_index, const ch
     fprintf(stderr, "Demo needs OpenCV for webcam images.\n");
 }
 #endif
-

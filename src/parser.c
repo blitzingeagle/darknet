@@ -657,10 +657,10 @@ network *parse_network_cfg(char *filename)
     n = n->next;
     int count = 0;
     free_section(s);
-    //fprintf(stdout, "layer     filters    size              input                output\n");
+    fprintf(stderr, "layer     filters    size              input                output\n");
     while(n){
         params.index = count;
-        //fprintf(stdout, "%5d ", count);
+        fprintf(stderr, "%5d ", count);
         s = (section *)n->val;
         options = s->options;
         layer l = {0};
@@ -1098,7 +1098,7 @@ void load_weights_upto(network *net, char *filename, int start, int cutoff)
         cuda_set_device(net->gpu_index);
     }
 #endif
-    //fprintf(stdout, "Loading weights from %s...", filename);
+    fprintf(stderr, "Loading weights from %s...", filename);
     fflush(stdout);
     FILE *fp = retrieve_file(filename, "rb", 1);
 
@@ -1176,7 +1176,7 @@ void load_weights_upto(network *net, char *filename, int start, int cutoff)
 #endif
         }
     }
-    //fprintf(stdout, "Done!\n");
+    fprintf(stderr, "Done!\n");
     fclose(fp);
 }
 
