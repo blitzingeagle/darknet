@@ -12,8 +12,7 @@ pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 list *get_paths(char *filename)
 {
     char *path;
-    FILE *file = fopen(filename, "r");
-    if(!file) file_error(filename);
+    FILE *file = retrieve_file(filename, "r", 1);
     list *lines = make_list();
     while((path=fgetl(file))){
         list_insert(lines, path);
@@ -137,8 +136,7 @@ matrix load_image_augment_paths(char **paths, int n, int min, int max, int size,
 
 box_label *read_boxes(char *filename, int *n)
 {
-    FILE *file = fopen(filename, "r");
-    if(!file) file_error(filename);
+    FILE *file = retrieve_file(filename, "r", 1);
     float x, y, h, w;
     int id;
     int count = 0;
@@ -368,8 +366,7 @@ void fill_truth_iseg(char *path, int num_boxes, float *truth, int classes, int w
     find_replace(labelpath, ".jpg", ".txt", labelpath);
     find_replace(labelpath, ".JPG", ".txt", labelpath);
     find_replace(labelpath, ".JPEG", ".txt", labelpath);
-    FILE *file = fopen(labelpath, "r");
-    if(!file) file_error(labelpath);
+    FILE *file = retrieve_file(labelpath, "r", 1);
     char buff[32788];
     int id;
     int i = 0;
@@ -554,7 +551,7 @@ matrix load_regression_labels_paths(char **paths, int n)
         find_replace(labelpath, ".jpg", ".txt", labelpath);
         find_replace(labelpath, ".png", ".txt", labelpath);
 
-        FILE *file = fopen(labelpath, "r");
+        FILE *file = retrieve_file(labelpath, "r", 1);
         fscanf(file, "%f", &(y.vals[i][0]));
         fclose(file);
     }
@@ -581,15 +578,23 @@ matrix load_tags_paths(char **paths, int n, int k)
     int count = 0;
     for(i = 0; i < n; ++i){
         char label[4096];
+// <<<<<<< HEAD
         find_replace(paths[i], "imgs", "labels", label);
         find_replace(label, "_iconl.jpeg", ".txt", label);
-        FILE *file = fopen(label, "r");
-        if(!file){
+        FILE *file = retrieve_file(label, "r", 0);
+        if(!file) {
             find_replace(label, "labels", "labels2", label);
-            file = fopen(label, "r");
+            file = retrieve_file(label, "r", 0);
             if(!file) continue;
         }
         ++count;
+// =======
+//         find_replace(paths[i], "images", "labels", label);
+//         find_replace(label, ".jpg", ".txt", label);
+//         FILE *file = retrieve_file(label, "r", 0);
+//         if (!file) continue;
+//         //++count;
+// >>>>>>> origin/v1.1
         int tag;
         while(fscanf(file, "%d", &tag) == 1){
             if(tag < k){
@@ -630,8 +635,7 @@ image get_segmentation_image(char *path, int w, int h, int classes)
     find_replace(labelpath, ".JPG", ".txt", labelpath);
     find_replace(labelpath, ".JPEG", ".txt", labelpath);
     image mask = make_image(w, h, classes);
-    FILE *file = fopen(labelpath, "r");
-    if(!file) file_error(labelpath);
+    FILE *file = retrieve_file(labelpath, "r", 1);
     char buff[32788];
     int id;
     image part = make_image(w, h, 1);
@@ -661,8 +665,7 @@ image get_segmentation_image2(char *path, int w, int h, int classes)
     for(i = 0; i < w*h; ++i){
         mask.data[w*h*classes + i] = 1;
     }
-    FILE *file = fopen(labelpath, "r");
-    if(!file) file_error(labelpath);
+    FILE *file = retrieve_file(labelpath, "r", 1);
     char buff[32788];
     int id;
     image part = make_image(w, h, 1);
@@ -852,7 +855,7 @@ data load_data_compare(int n, char **paths, int m, int classes, int w, int h)
         char imlabel2[4096];
         find_replace(paths[i*2],   "imgs", "labels", imlabel1);
         find_replace(imlabel1, "jpg", "txt", imlabel1);
-        FILE *fp1 = fopen(imlabel1, "r");
+        FILE *fp1 = retrieve_file(imlabel1, "r", 1);
 
         while(fscanf(fp1, "%d %f", &id, &iou) == 2){
             if (d.y.vals[i][2*id] < iou) d.y.vals[i][2*id] = iou;
@@ -860,7 +863,7 @@ data load_data_compare(int n, char **paths, int m, int classes, int w, int h)
 
         find_replace(paths[i*2+1], "imgs", "labels", imlabel2);
         find_replace(imlabel2, "jpg", "txt", imlabel2);
-        FILE *fp2 = fopen(imlabel2, "r");
+        FILE *fp2 = retrieve_file(imlabel2, "r", 1);
 
         while(fscanf(fp2, "%d %f", &id, &iou) == 2){
             if (d.y.vals[i][2*id + 1] < iou) d.y.vals[i][2*id + 1] = iou;
@@ -1281,8 +1284,7 @@ data load_cifar10_data(char *filename)
     d.X = X;
     d.y = y;
 
-    FILE *fp = fopen(filename, "rb");
-    if(!fp) file_error(filename);
+    FILE *fp = retrieve_file(filename, "rb", 1);
     for(i = 0; i < 10000; ++i){
         unsigned char bytes[3073];
         fread(bytes, 1, 3073, fp);
@@ -1344,8 +1346,7 @@ data load_all_cifar10()
     for(b = 0; b < 5; ++b){
         char buff[256];
         sprintf(buff, "data/cifar/cifar-10-batches-bin/data_batch_%d.bin", b+1);
-        FILE *fp = fopen(buff, "rb");
-        if(!fp) file_error(buff);
+        FILE *fp = retrieve_file(buff, "rb", 1);
         for(i = 0; i < 10000; ++i){
             unsigned char bytes[3073];
             fread(bytes, 1, 3073, fp);
@@ -1365,12 +1366,11 @@ data load_all_cifar10()
 
 data load_go(char *filename)
 {
-    FILE *fp = fopen(filename, "rb");
+    FILE *fp = retrieve_file(filename, "rb", 1);
     matrix X = make_matrix(3363059, 361);
     matrix y = make_matrix(3363059, 361);
     int row, col;
 
-    if(!fp) file_error(filename);
     char *label;
     int count = 0;
     while((label = fgetl(fp))){
@@ -1534,4 +1534,3 @@ data *split_data(data d, int part, int total)
     split[1] = test;
     return split;
 }
-

@@ -769,8 +769,7 @@ network *parse_network_cfg(char *filename)
 
 list *read_cfg(char *filename)
 {
-    FILE *file = fopen(filename, "r");
-    if(file == 0) file_error(filename);
+    FILE *file = retrieve_file(filename, "r", 1);
     char *line;
     int nu = 0;
     list *options = make_list();
@@ -1101,8 +1100,7 @@ void load_weights_upto(network *net, char *filename, int start, int cutoff)
 #endif
     //fprintf(stdout, "Loading weights from %s...", filename);
     fflush(stdout);
-    FILE *fp = fopen(filename, "rb");
-    if(!fp) file_error(filename);
+    FILE *fp = retrieve_file(filename, "rb", 1);
 
     int major;
     int minor;
@@ -1186,4 +1184,3 @@ void load_weights(network *net, char *filename)
 {
     load_weights_upto(net, filename, 0, net->n);
 }
-

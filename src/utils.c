@@ -58,8 +58,7 @@ int *read_map(char *filename)
     int n = 0;
     int *map = 0;
     char *str;
-    FILE *file = fopen(filename, "r");
-    if(!file) file_error(filename);
+    FILE *file = retrieve_file(filename, "r", 1);
     while((str=fgetl(file))){
         ++n;
         map = realloc(map, n*sizeof(int));
@@ -243,9 +242,9 @@ unsigned char *read_file(char *filename)
     FILE *fp = fopen(filename, "rb");
     size_t size;
 
-    fseek(fp, 0, SEEK_END); 
+    fseek(fp, 0, SEEK_END);
     size = ftell(fp);
-    fseek(fp, 0, SEEK_SET); 
+    fseek(fp, 0, SEEK_SET);
 
     unsigned char *text = calloc(size+1, sizeof(char));
     fread(text, 1, size, fp);
@@ -557,7 +556,7 @@ float mag_array(float *a, int n)
     int i;
     float sum = 0;
     for(i = 0; i < n; ++i){
-        sum += a[i]*a[i];   
+        sum += a[i]*a[i];
     }
     return sqrt(sum);
 }
@@ -643,7 +642,7 @@ float rand_normal()
 
 size_t rand_size_t()
 {
-    return  ((size_t)(rand()&0xff) << 56) | 
+    return  ((size_t)(rand()&0xff) << 56) |
         ((size_t)(rand()&0xff) << 48) |
         ((size_t)(rand()&0xff) << 40) |
         ((size_t)(rand()&0xff) << 32) |
@@ -682,3 +681,19 @@ float **one_hot_encode(float *a, int n, int k)
     return t;
 }
 
+FILE *retrieve_file(char *file, const char *mode, int terminate) {
+  FILE *fp;
+
+  fp = fopen(file, mode);
+
+  if(!fp) {
+    char filepath[255];
+    strcpy(filepath, darknet_path);
+    strcat(filepath, "/");
+    strcat(filepath, file);
+    fp = fopen(filepath, mode);
+    if(!fp && terminate) file_error(file);
+  }
+
+  return (fp);
+}

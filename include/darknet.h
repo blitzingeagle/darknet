@@ -7,6 +7,7 @@
 #include <pthread.h>
 #define SECRET_NUM -1234
 extern int gpu_index;
+extern char *darknet_path;
 
 #ifdef GPU
     #define BLOCK 512
