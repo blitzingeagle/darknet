@@ -1,7 +1,7 @@
 FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
 
 RUN apt-get update && apt-get install -y git wget \
-    libopencv-dev
+    libopencv-dev autoconf automake libtool
 
 RUN cd /usr/local/src && \
     git clone -b v2.0 https://github.com/blitzingeagle/darknet.git --recurse-submodules && \
