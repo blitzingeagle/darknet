@@ -31,11 +31,6 @@ class METADATA(Structure):
     _fields_ = [("classes", c_int),
                 ("names", POINTER(c_char_p))]
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> b7cad0eda0969b7c68655948ef7e7a8186183b07
 #lib = CDLL("/home/pjreddie/documents/darknet/libdarknet.so", RTLD_GLOBAL)
 lib = CDLL("/usr/local/src/darknet/libdarknet.so", RTLD_GLOBAL)
 lib.network_width.argtypes = [c_void_p]
