@@ -7,7 +7,6 @@
 #include <float.h>
 #include <limits.h>
 #include <time.h>
-#include <sys/time.h>
 
 #include "utils.h"
 
@@ -26,11 +25,9 @@ double get_wall_time()
 
 double what_time_is_it_now()
 {
-    struct timeval time;
-    if (gettimeofday(&time,NULL)){
-        return 0;
-    }
-    return (double)time.tv_sec + (double)time.tv_usec * .000001;
+    struct timespec now;
+    clock_gettime(CLOCK_REALTIME, &now);
+    return now.tv_sec + now.tv_nsec*1e-9;
 }
 
 int *read_intlist(char *gpu_list, int *ngpus, int d)
@@ -91,22 +88,6 @@ void shuffle(void *arr, size_t n, size_t size)
         memcpy(arr+(j*size), arr+(i*size), size);
         memcpy(arr+(i*size), swp,          size);
     }
-}
-
-int *random_index_order(int min, int max)
-{
-    int *inds = calloc(max-min, sizeof(int));
-    int i;
-    for(i = min; i < max; ++i){
-        inds[i] = i;
-    }
-    for(i = min; i < max-1; ++i){
-        int swap = inds[i];
-        int index = i + rand()%(max-i);
-        inds[i] = inds[index];
-        inds[index] = swap;
-    }
-    return inds;
 }
 
 void del_arg(int argc, char **argv, int index)
@@ -601,20 +582,6 @@ int sample_array(float *a, int n)
     return n-1;
 }
 
-int max_int_index(int *a, int n)
-{
-    if(n <= 0) return -1;
-    int i, max_i = 0;
-    int max = a[0];
-    for(i = 1; i < n; ++i){
-        if(a[i] > max){
-            max = a[i];
-            max_i = i;
-        }
-    }
-    return max_i;
-}
-
 int max_index(float *a, int n)
 {
     if(n <= 0) return -1;
@@ -627,15 +594,6 @@ int max_index(float *a, int n)
         }
     }
     return max_i;
-}
-
-int int_index(int *a, int val, int n)
-{
-    int i;
-    for(i = 0; i < n; ++i){
-        if(a[i] == val) return i;
-    }
-    return -1;
 }
 
 int rand_int(int min, int max)

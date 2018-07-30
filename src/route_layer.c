@@ -68,7 +68,7 @@ void resize_route_layer(route_layer *l, network *net)
     l->output_gpu  = cuda_make_array(l->output, l->outputs*l->batch);
     l->delta_gpu   = cuda_make_array(l->delta,  l->outputs*l->batch);
 #endif
-    
+
 }
 
 void forward_route_layer(const route_layer l, network net)

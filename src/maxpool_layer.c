@@ -124,4 +124,3 @@ void backward_maxpool_layer(const maxpool_layer l, network net)
         net.delta[index] += l.delta[i];
     }
 }
-
