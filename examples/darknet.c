@@ -22,8 +22,6 @@ extern void run_art(int argc, char **argv);
 extern void run_super(int argc, char **argv);
 extern void run_lsd(int argc, char **argv);
 
-char *darknet_path;
-
 void average(int argc, char *argv[])
 {
     char *cfgfile = argv[2];
@@ -32,13 +30,13 @@ void average(int argc, char *argv[])
     network *net = parse_network_cfg(cfgfile);
     network *sum = parse_network_cfg(cfgfile);
 
-    char *weightfile = argv[4];   
+    char *weightfile = argv[4];
     load_weights(sum, weightfile);
 
     int i, j;
     int n = argc - 5;
     for(i = 0; i < n; ++i){
-        weightfile = argv[i+5];   
+        weightfile = argv[i+5];
         load_weights(net, weightfile);
         for(j = 0; j < net->n; ++j){
             layer l = net->layers[j];
@@ -402,11 +400,7 @@ void visualize(char *cfgfile, char *weightfile)
 #endif
 }
 
-int main(int argc, char **argv)
-{
-    darknet_path = getenv("DARKNET_PATH");
-    //printf("DARKNET_PATH: %s\n", darknet_path);
-
+int main(int argc, char **argv) {
     //test_resize("data/bad.jpg");
     //test_box();
     //test_convolutional_layer();
@@ -508,4 +502,3 @@ int main(int argc, char **argv)
     }
     return 0;
 }
-

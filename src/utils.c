@@ -729,6 +729,7 @@ FILE *retrieve_file(char *file, const char *mode, int terminate) {
   fp = fopen(file, mode);
 
   if(!fp) {
+    char *darknet_path = getenv("DARKNET_PATH");
     char filepath[255];
     strcpy(filepath, darknet_path);
     strcat(filepath, "/");

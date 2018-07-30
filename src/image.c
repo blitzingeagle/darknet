@@ -630,6 +630,7 @@ image load_image_cv(char *filename, int channels)
 
     if( (src = cvLoadImage(filename, flag)) == 0 )
     {
+        char *darknet_path = getenv("DARKNET_PATH");
         char filepath[255];
         strcpy(filepath, darknet_path);
         strcat(filepath, "/");
