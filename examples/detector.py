@@ -8,7 +8,7 @@ sys.path.append(os.path.join(os.getcwd(),'python/'))
 
 import darknet as dn
 
-net = dn.load_net("cfg/tiny-yolo.cfg", "tiny-yolo.weights", 0)
+net = dn.load_net("cfg/yolov2.cfg", "weights/yolov2.weights", 0)
 meta = dn.load_meta("cfg/coco.data")
 r = dn.detect(net, meta, "data/dog.jpg")
 print r
@@ -22,4 +22,3 @@ r = dn.detect(net, meta, "data/horses.jpg")
 print r
 r = dn.detect(net, meta, "data/person.jpg")
 print r
-

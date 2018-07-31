@@ -9,6 +9,7 @@ RUN cd /usr/local/src && \
     sh autogen.sh && ./configure && make && make install && make check
 
 ENV DARKNET_PATH /usr/local/src/darknet
+ENV PYTHONPATH $DARKNET_PATH/python
 WORKDIR $DARKNET_PATH
 
 RUN cd $DARKNET_PATH && make && \
