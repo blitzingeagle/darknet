@@ -89,6 +89,21 @@ predict_image.restype = POINTER(c_float)
 network_detect = lib.network_detect
 network_detect.argtypes = [c_void_p, IMAGE, c_float, c_float, c_float, POINTER(BOX), POINTER(POINTER(c_float))]
 
+# show_image = lib.show_image
+# show_image.argtypes = [IMAGE, c_char_p]
+#
+# cvWaitKey = lib.cvWaitKey
+# cvWaitKey.argtypes = [c_int]
+#
+# cvDestroyAllWindows = lib.cvDestroyAllWindows
+# cvDestroyAllWindows.argtypes = []
+
+"""
+show_image(im, "predictions");
+cvWaitKey(0);
+cvDestroyAllWindows();
+"""
+
 def classify(net, meta, im):
     out = predict_image(net, im)
     res = []

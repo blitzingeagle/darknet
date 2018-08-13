@@ -142,6 +142,7 @@ void *detect_in_thread(void *ptr)
 
     draw_detections_whitelist(display, demo_detections, demo_thresh, boxes, probs, 0, demo_names, demo_alphabet, demo_classes, whitelist, listsize, tag_results);
     //printf("detect_in_thread : %s\n", tag_results);
+    
     demo_index = (demo_index + 1)%demo_frame;
     running = 0;
     return 0;
