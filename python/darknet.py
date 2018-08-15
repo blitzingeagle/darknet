@@ -122,8 +122,17 @@ def detect(net, meta, image, thresh=.5, hier_thresh=.5, nms=.45):
     for j in range(num):
         for i in range(meta.classes):
             if probs[j][i] > 0:
-                res.append((meta.names[i].decode("utf-8"), probs[j][i], (boxes[j].x, boxes[j].y, boxes[j].w, boxes[j].h)))
-    res = sorted(res, key=lambda x: -x[1])
+                # res.append((meta.names[i].decode("utf-8"), probs[j][i], (boxes[j].x, boxes[j].y, boxes[j].w, boxes[j].h)))
+                res.append({
+                    "class": meta.names[i].decode("utf-8"),
+                    "conf": probs[j][i],
+                    "x": boxes[j].x,
+                    "y": boxes[j].y,
+                    "w": boxes[j].w,
+                    "h": boxes[j].h
+                })
+    # res = sorted(res, key=lambda x: -x[1])
+    res = sorted(res, key=lambda x: -x["conf"])
     free_image(im)
     free_ptrs(cast(probs, POINTER(c_void_p)), num)
     return res
@@ -134,7 +143,8 @@ if __name__ == "__main__":
     #meta = load_meta("cfg/imagenet1k.data")
     #r = classify(net, meta, im)
     #print r[:10]
-    net = load_net("cfg/tiny-yolo.cfg", "tiny-yolo.weights", 0)
-    meta = load_meta("cfg/coco.data")
-    r = detect(net, meta, "data/dog.jpg")
-    print(r)
+    net = load_net(b"cfg/yolov2.cfg", b"weights/yolov2.weights", 0)
+    meta = load_meta(b"cfg/coco.data")
+    r = detect(net, meta, b"data/dog.jpg")
+    from pprint import pprint
+    pprint(r)
