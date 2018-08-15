@@ -146,5 +146,4 @@ if __name__ == "__main__":
     net = load_net(b"cfg/yolov2.cfg", b"weights/yolov2.weights", 0)
     meta = load_meta(b"cfg/coco.data")
     r = detect(net, meta, b"data/dog.jpg")
-    from pprint import pprint
-    pprint(r)
+    print(r)
