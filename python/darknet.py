@@ -1,6 +1,7 @@
 from ctypes import *
 import math
 import random
+from pprint import pprint
 
 def sample(probs):
     s = sum(probs)
@@ -136,8 +137,16 @@ def detect(net, meta, image, thresh=.5, hier_thresh=.5, nms=.45):
         for i in range(meta.classes):
             if dets[j].prob[i] > 0:
                 b = dets[j].bbox
-                res.append((meta.names[i], dets[j].prob[i], (b.x, b.y, b.w, b.h)))
-    res = sorted(res, key=lambda x: -x[1])
+                res.append({
+                    "class" : meta.names[i].decode("utf-8"),
+                    "conf" : dets[j].prob[i],
+                    "x" : b.x,
+                    "y" : b.y,
+                    "w" : b.w,
+                    "h" : b.h
+                })
+                # res.append((meta.names[i], dets[j].prob[i], (b.x, b.y, b.w, b.h)))
+    res = sorted(res, key=lambda x: -x["conf"])
     free_image(im)
     free_detections(dets, num)
     return res
@@ -146,4 +155,4 @@ if __name__ == "__main__":
     net = load_net(b"cfg/yolov2.cfg", b"weights/yolov2.weights", 0)
     meta = load_meta(b"cfg/coco.data")
     r = detect(net, meta, b"data/dog.jpg")
-    print(r)
+    pprint(r)
